@@ -6,6 +6,7 @@ classdef RunParams < LFADS.RunParams
        % parameters to be added without invalidating old hashes. So choose
        % the default once and don't change it. If you decide to use another
        % value later by default, override it in the constructor instead.
+       c_ar_prior_dist = 'laplace';
    end
    
    methods
