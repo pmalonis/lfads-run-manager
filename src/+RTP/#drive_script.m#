@@ -1,0 +1,57 @@
+%% This script walks through running LFADS on a single Lorenz dataset
+%% Generate synthetic Lorenz datasets
+
+% build the dataset collection
+datasetPath = '../../data/raw/';
+
+%% Locate and specify the datasets
+dc = RTP.DatasetCollection(datasetPath);
+dc.name = 'controller_params_sweep';
+
+% add individual datasets
+RTP.Dataset(dc, 'raju_M1.mat');
+RTP.Dataset(dc, 'raju_PMd.mat');
+RTP.Dataset(dc, 'raju.mat');
+RTP.Dataset(dc, 'rockstar.mat');
+
+%% Build RunCollection - first a single run
+
+% Run a single model for each of the datasets
+runRoot = '../../data/model_output';
+rc = RTP.RunCollection(runRoot, 'controller_params_sweep', dc);
+
+% replace this with the date this script was authored as YYYYMMDD
+% This ensures that updates to lfads-run-manager will remain compatible
+% with older runs already on disk
+rc.version = 20180131;
+
+%% Set some hyperparameters
+
+
+%% Create the RunSpecs
+
+% Define a RunSpec, which indicates which datasets get included, as well as
+% what name to call this run spec
+for ds_index = 1:4
+    runSpecName = dc.datasets(ds_index).getSingleRunName(); % generates a simple run name from this datasets name
+    runSpec = RTP.RunSpec(runSpecName, dc, ds_index);
+    % add this RunSpec to the RunCollection
+    rc.addRunSpec(runSpec);
+end
+
+% adding a return here allows you to call this script to recreate all of
+% the objects here for subsequent analysis after the actual LFADS models
+% have been trained. The code below will setup the LFADS training runs on
+% disk the first time around, and should be run once manually.
+%return;
+
+%% Prepare LFADS input and shell scripts
+
+% generate all of the data files LFADS needs to run everything
+rc.prepareForLFADS();
+
+% write a python script that will train all of the LFADS runs using a
+% load-balancer against the available CPUs and GPUs
+% you should set display to a valid x display
+% Other options are available
+rc.writeShellScriptRunQueue('display', 0, 'virtualenv', 'lfads');
