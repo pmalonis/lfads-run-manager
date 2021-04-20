@@ -21,7 +21,7 @@ PLAYBACK.Dataset(dc, 'mk08011M1m.mat');
 
 % Run a single model for each of the datasets
 runRoot = '../../data/model_output';
-rc = PLAYBACK.RunCollection(runRoot, 'mack_kl_co_sweep', dc);
+rc = PLAYBACK.RunCollection(runRoot, 'new_param_test', dc);
 
 % replace this with the date this script was authored as YYYYMMDD
 % This ensures that updates to lfads-run-manager will remain compatible
@@ -48,7 +48,7 @@ par.c_l2_gen_scale = 500;
 %par.c_do_train_prior_ar_nvar = false;
 par.c_cell_clip_value = 5;
 par.c_factors_dim = 40;
-par.prior_dist = 'laplace';
+par.c_ar_prior_dist = 'laplace';
 %par.c_kl_co_weight = 2;
 %par.c_prior_ar_nvar = 1;
 parSet = par.generateSweep('c_kl_co_weight', [1.6 1.7 1.8 1.9]);
